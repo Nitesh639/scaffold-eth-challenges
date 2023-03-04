@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 
-const localChainId = "31337";
+// const localChainId = "31337";
 
 module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
@@ -18,7 +18,20 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   const riggedRoll = await ethers.getContract("RiggedRoll", deployer);
 
-  //const ownershipTransaction = await riggedRoll.transferOwnership("** YOUR FRONTEND ADDRESS **");
+  // const ownershipTransaction = await riggedRoll.transferOwnership(vender.address);
+  if (chainId !== "31337") {
+    try {
+      console.log(" 🎫 Verifing Contract on Etherscan... ");
+      await sleep(50000);
+      await run("verify:verify", {
+        address: riggedRoll.address,
+        contract: "contracts/RiggedRoll.sol:RiggedRoll",
+        constructorArguments: [diceGame.address],
+      });
+    } catch (e) {
+      console.log(" ⚠️ Failed to verify contract on Etherscan ");
+    }
+  }
 };
 
 function sleep(ms) {
