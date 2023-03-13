@@ -7,11 +7,11 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  await deploy("Streamer", {
-    from: deployer,
-    log: true,
-    waitConfirmations: 5,
-  });
+  // await deploy("Streamer", {
+  //   from: deployer,
+  //   log: true,
+  //   waitConfirmations: 5,
+  // });
 
   const streamer = await ethers.getContract("Streamer", deployer);
 
