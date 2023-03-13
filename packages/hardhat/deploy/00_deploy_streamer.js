@@ -5,24 +5,27 @@ const { ethers } = require("hardhat");
 module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+  const chainId = await getChainId();
 
   await deploy("Streamer", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     log: true,
+    waitConfirmations: 5,
   });
 
   const streamer = await ethers.getContract("Streamer", deployer);
 
-  //console.log("\n 🤹  Sending ownership to frontend address...\n");
-  //Checkpoint 2: change address to your frontend address vvvv
-  //const ownerTx = await streamer.transferOwnership("** YOUR FRONTEND ADDRESS **");
-
-  // console.log("\n       confirming...\n");
-  // const ownershipResult = await ownerTx.wait();
-  // if (ownershipResult) {
-  //   console.log("       ✅ ownership transferred successfully!\n");
-  // }
+  if (chainId !== "31337") {
+    try {
+      console.log(" 🎫 Verifing Contract on Etherscan... ");
+      await run("verify:verify", {
+        address: streamer.address,
+        contract: "contracts/Streamer.sol:Streamer",
+      });
+    } catch (e) {
+      console.log(" ⚠️ Failed to verify contract on Etherscan ");
+    }
+  }
 };
 
 module.exports.tags = ["Streamer"];
